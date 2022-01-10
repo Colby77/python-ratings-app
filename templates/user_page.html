@@ -4,10 +4,20 @@
 {% block content %}
 
 
-<h1>User id: {{ user_id }}</h1>
-<h2>Email: {{ email }}</h2>
-<h2>Password: {{ password }}</h2>
-<h2>Age: {{ age }}</h2>
-<h2>Zipcode: {{ zipcode }}</h2>
+<h1>User id: {{ user.user_id }}</h1>
+<h2>Email: {{ user.email }}</h2>
+<h2>Password: {{ user.password }}</h2>
+<h2>Age: {{ user.age }}</h2>
+<h2>Zipcode: {{ user.zipcode }}</h2>
+
+{% for r in ratings %}
+
+<h3> rating_id {{ r.rating_id }}</h3>
+<ul>
+    <li>movie_id: {{ r.movie_id }}</li>
+    <li>score {{ r.score }}</li>
+</ul>
+
+{% endfor %}
 
 {% endblock %}
