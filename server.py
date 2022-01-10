@@ -34,12 +34,34 @@ def user_list():
     return render_template('user_list.html', users=users)
 
 
+@app.route('/users/<int:id>')
+def show_user(id):
+    
+    user = User.query.get(id)
+    # print(user)
+    ratings = Rating.query.filter_by(user_id=user.user_id)
+    # print(ratings)
+
+    return render_template('user_page.html',user=user, ratings=ratings)
+
+
 @app.route('/movies')
 def movie_list():
 
     movies = Movie.query.order_by(Movie.title).all()
 
     return render_template('movie_list.html', movies=movies)
+
+
+@app.route('/movies/<int:id>')
+def show_movie(id):
+    
+    movie = Movie.query.get(id)
+    # print(movie.imdb_url)
+    ratings = Rating.query.filter_by(movie_id=movie.movie_id)
+    # print(ratings)
+
+    return render_template('movie_page.html',movie=movie, ratings=ratings)
 
 
 @app.route('/login', methods=['GET'])
@@ -117,15 +139,7 @@ def register():
     return redirect(f'/users/{user.user_id}')
 
 
-@app.route('/users/<int:id>')
-def show_user(id):
-    
-    user = User.query.get(id)
-    # print(user)
-    ratings = Rating.query.filter_by(user_id=user.user_id)
-    print(ratings)
 
-    return render_template('user_page.html',user=user, ratings=ratings)
 
 
 if __name__ == "__main__":
