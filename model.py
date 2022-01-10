@@ -2,9 +2,10 @@
 
 # import Flask
 # import SQLAlchemy as db
+from typing import Sequence
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, select
 from sqlalchemy.orm import backref, relation, relationship
 
 from secret import user, password, host, port, db_name
@@ -35,13 +36,11 @@ class User(db.Model):
     age = db.Column(db.Integer, nullable=True)
     zipcode = db.Column(db.String(15), nullable=True)
 
-    # user_rel = relationship('Rating')
 
     def __repr__(self):
         '''More helpful information when printed'''
         return f'<User user_id={self.user_id} email={self.email}>'
 
-# Put your Movie and Rating model classes here.
 
 
 class Movie(db.Model):
@@ -64,8 +63,8 @@ class Rating(db.Model):
 
  
     rating_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
-    movie_id = db.Column(db.Integer, db.ForeignKey('movies.movie_id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    movie_id = db.Column(db.Integer, db.ForeignKey('movies.movie_id'))
     score = db.Column(db.Integer, nullable=False)
     
     user = db.relationship('User', backref=db.backref('ratings', order_by=rating_id))
@@ -84,6 +83,9 @@ def connect_to_db(app):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.app = app
     db.init_app(app)
+
+
+
 
 
 if __name__ == "__main__":

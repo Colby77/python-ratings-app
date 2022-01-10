@@ -34,16 +34,93 @@ def user_list():
     return render_template('user_list.html', users=users)
 
 
-@app.route('/login')
-def login():
+@app.route('/login', methods=['GET'])
+def login_page():
 
     return render_template('login.html')
 
 
-@app.route('/register')
-def register():
+@app.route('/login', methods=['POST'])
+def login():
+    email = request.form['email']
+    password = request.form['password']
+    # print(email)
+    # print(password)
+
+    user = User.query.filter_by(email=email).first()
+    # print(user.user_id, user.password)
+
+    if user:
+        if user.password == password:
+            session['user'] = user.user_id
+            flash('Logged in successfully', 'success')
+            # print(session)
+            return redirect('/')
+        else:
+            flash('Password incorrect', 'error')
+            return redirect('/login')
+    else:
+        flash('User not found', 'error')
+        return redirect('/login')
+
+
+@app.route('/logout')
+def logout():
+
+    del session['user']
+    flash('Logged out', 'success')
+    # print(session)
+    return redirect('/')
+
+
+@app.route('/register', methods=['GET'])
+def register_page():
 
     return render_template('register.html')
+
+@app.route('/register', methods=['POST'])
+def register():
+    
+    email = request.form['email']
+    password = request.form['password']
+    age = request.form['age']
+    zipcode = request.form['zipcode']
+
+    user = User.query.filter_by(email=email).first()
+    
+    if user:
+        flash('Account already exists', 'error')
+        return redirect('/register')
+    else:
+        user = User(
+                    email=email,
+                    password=password,
+                    age=age,
+                    zipcode=zipcode
+                    )
+        flash('Account created', 'success')
+        print(user)
+
+        db.session.add(user)
+        db.session.commit()
+
+        session['user'] = user.user_id
+
+    return redirect('/')
+
+
+@app.route('/users/<user_id>')
+def show_user(user_id):
+    
+    user = User.query.filter_by(user_id=user_id)
+
+    return render_template('user_page.html',
+                            user_id=user.user_id,
+                            email=user.email,
+                            password=user.email,
+                            age=user.age,
+                            zipcode=user.zipcode
+                            )
 
 
 if __name__ == "__main__":
@@ -56,6 +133,6 @@ if __name__ == "__main__":
     connect_to_db(app)
 
     # Use the DebugToolbar
-    DebugToolbarExtension(app)
+    # DebugToolbarExtension(app)
 
     app.run(port=5000, host='0.0.0.0')

@@ -7,6 +7,13 @@
     <title>Ratings</title>
 </head>
 <body>
+
+    {% with messages = get_flashed_messages() %}
+        {% for message in messages %}
+            <div>{{ message }}</div>
+        {% endfor %}
+    {% endwith %}
+
         {% block content %}
         
 
